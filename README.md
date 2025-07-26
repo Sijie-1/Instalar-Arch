@@ -47,46 +47,44 @@ cfdisk /dev/nvme0n1  # (ajustar según tu disco)
 | sda4      | Resto     | Linux filesystem    | /home   |
 
 ## Instalar Sistema Base
-# Paquetes comunes para ambos sistemas:
+Paquetes comunes para ambos sistemas:
 ```bash
 pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode \
 networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks \
 xdg-user-dirs flatpak bash-completion fastfetch firewalld
 ```
-# Específico para UEFI:
+Específico para UEFI:
 ```bash
 pacstrap -K /mnt efibootmgr
 ```
-# Específico para BIOS:
+Específico para BIOS:
 ```bash
 pacstrap -K /mnt os-prober
 ```
 ## Configuración básica del sistema
-# Zona horaria (Ecuador)
+Zona horaria (Ecuador)
 ```bash
 ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime
 ```
-# Configuración regional
+Configuración regional
 ```bash
 echo "LANG=es_EC.UTF-8" > /etc/locale.conf
 ```
-# Crear usuario
+Crear usuario
 ```bash
 useradd -m -G wheel -s /bin/bash tu_usuario
 passwd tu_usuario
 ```
-# Configurar sudo
+Configurar sudo
 ```bash
 EDITOR=nano visudo  # Descomentar: %wheel ALL=(ALL:ALL) ALL
 ```
-# Instalar GRUB
-## Para UEFI:
+## Instalar GRUB
+Para UEFI:
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 ```
-## Para BIOS:
+Para BIOS:
 ```bash
 grub-install --target=i386-pc /dev/sda
 ```
-
-```bash
