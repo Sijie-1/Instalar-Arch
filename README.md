@@ -88,3 +88,36 @@ Para BIOS:
 ```bash
 grub-install --target=i386-pc /dev/sda
 ```
+
+
+## Post-Install, eso creo
+0. Conectarse a internet
+1. Actualizar sistema
+```bash
+sudo pacman -Syu
+```
+3. Configurar Flatpak
+```bash
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+4. Habilitar Multilib (para Steam/WINE)
+```bash
+sudo nano /etc/pacman.conf  # Descomentar [multilib]
+sudo pacman -Syu
+```
+5. Instalar yay (AUR Helper)
+```bash
+sudo pacman -S --needed base-devel git
+git clone https://aur.archlinux.org/yay.git
+cd yay && makepkg -si
+```
+6. Fastfetch en terminal
+```bash
+echo -e "\nclear\nfastfetch" >> ~/.bashrc
+```
+7. Configurar firewall
+```bash
+sudo firewall-cmd --set-default-zone=home
+sudo firewall-cmd --complete-reload
+```
+
