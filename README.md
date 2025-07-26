@@ -28,9 +28,10 @@ exit
 ping -c 4 archlinux.org
 ```
 ## Particionar disco (GPT)
+```bash
 lsblk
 cfdisk /dev/nvme0n1  # (ajustar según tu disco)
-
+```
 | Partición | Tamaño    | Tipo (GPT)       | Montaje |
 |-----------|-----------|------------------|---------|
 | nvme0n1p1 | 550 MiB   | EFI System (ef00)| /boot   |
@@ -47,34 +48,45 @@ cfdisk /dev/nvme0n1  # (ajustar según tu disco)
 
 ## Instalar Sistema Base
 # Paquetes comunes para ambos sistemas:
+```bash
 pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode \
 networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks \
 xdg-user-dirs flatpak bash-completion fastfetch firewalld
-
+```
 # Específico para UEFI:
+```bash
 pacstrap -K /mnt efibootmgr
-
+```
 # Específico para BIOS:
+```bash
 pacstrap -K /mnt os-prober
-
+```
 ## Configuración básica del sistema
 # Zona horaria (Ecuador)
+```bash
 ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime
-
+```
 # Configuración regional
+```bash
 echo "LANG=es_EC.UTF-8" > /etc/locale.conf
-
+```
 # Crear usuario
+```bash
 useradd -m -G wheel -s /bin/bash tu_usuario
 passwd tu_usuario
-
+```
 # Configurar sudo
+```bash
 EDITOR=nano visudo  # Descomentar: %wheel ALL=(ALL:ALL) ALL
-
+```
 # Instalar GRUB
 ## Para UEFI:
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+```bash
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
+```
 ## Para BIOS:
+```bash
 grub-install --target=i386-pc /dev/sda
+```
 
-
+```bash
