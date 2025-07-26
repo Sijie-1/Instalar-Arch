@@ -1,7 +1,7 @@
 # � Instalar-Arch
 
 🔹
-Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea hacer uso de ella tiene que hacerlo bajo su responsabilidad, realmente lo adapte para mis necesidades ya que lleva en si gnome como escritorio principal y un mayor enfoque para intel
+Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea hacer uso de ella tiene que hacerlo bajo su propio riesgo, realmente lo adapte para mis necesidades ya que lleva un mayor enfoque para intel
 ---
 
 ## � Características Principales  
