@@ -4,7 +4,7 @@
 Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea hacer uso de ella tiene que hacerlo bajo su propio riesgo, realmente lo adapte para mis necesidades ya que lleva un mayor enfoque para intel
 ---
 
-## � Características Principales  
+# � Características Principales  
 - *Guia de instalación manual*   
 - *Escritorio*: Gnome 
 - *Enfoque principal*: Lo mas vanilla posible
@@ -17,7 +17,7 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 ![UEFI/BIOS](https://img.shields.io/badge/UEFI%2FBIOS-Compatible-blueviolet)
 ![GNOME](https://img.shields.io/badge/GNOME-4A86CF?logo=gnome&logoColor=white)
 
-## Conexión a Internet (Común para ambos sistemas)
+# Conexión a Internet
 ```bash
 rfkill unblock all
 ip link set wlan0 up
@@ -27,7 +27,7 @@ iwctl
 exit
 ping -c 4 archlinux.org
 ```
-## Particionar disco (GPT)
+# Particionar disco (GPT)
 ```bash
 lsblk
 cfdisk /dev/nvme0n1  # (ajustar según tu disco)
@@ -46,8 +46,39 @@ cfdisk /dev/nvme0n1  # (ajustar según tu disco)
 | sda3      | 30-50 GiB | Linux filesystem    | /       |
 | sda4      | Resto     | Linux filesystem    | /home   |
 
-## Instalar Sistema Base
-Paquetes comunes para ambos sistemas:
+## Formatear particiones (gpt)
+```bash
+mkfs.fat -F32 /dev/nvme0n1p1
+mkswap /dev/nvme0n1p2
+mkfs.ext4 /dev/nvme0n1p3
+mkfs.ext4 /dev/nvme0n1p4
+```
+## Montar particiones (gpt)
+```bash
+mount /dev/nvme0n1p3 /mnt
+mkdir -p /mnt/boot
+mount /dev/nvme0n1p1 /mnt/boot
+swapon /dev/nvme0n1p2
+mkdir -p /mnt/home
+mount /dev/nvme0n1p4 /mnt/home
+```
+## Formatear particiones (mbr)
+```bash
+mkfs.ext4 /dev/sda1
+mkswap /dev/sda2
+mkfs.ext4 /dev/sda3
+mkfs.ext4 /dev/sda4
+```
+## Montar particiones (mbr)
+```bash
+mount /dev/sda3 /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+swapon /dev/sda2
+mkdir -p /mnt/home
+mount /dev/sda4 /mnt/home
+```
+# Instalar Sistema Base
 ```bash
 pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode \
 networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks \
@@ -61,14 +92,47 @@ Específico para BIOS:
 ```bash
 pacstrap -K /mnt os-prober
 ```
-## Configuración básica del sistema
+Generar fstab:
+```bash
+genfstab -U /mnt >> /mnt/etc/fstab
+```
+# Entrar al sistema (chroot)
+```bash
+arch-chroot /mnt
+```
+# Configuración básica del sistema
 Zona horaria (Ecuador)
 ```bash
 ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime
+timedatectl set-ntp true
+timedatectl set-local-rtc 0
+hwclock --systohc
+nano /etc/locale.gen  # Descomentar es_EC.UTF-8 UTF-8
+locale-gen
 ```
 Configuración regional
 ```bash
 echo "LANG=es_EC.UTF-8" > /etc/locale.conf
+```
+Configuración de red y hostname
+```bash
+echo "archlinux" > /etc/hostname
+nano /etc/hosts
+
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    archlinux.localdomain archlinux
+```
+# Habilitación de servicios
+```bash
+systemctl enable gdm
+systemctl enable NetworkManager
+systemctl enable firewalld
+```
+# Configurar usuario y sudo
+Contraseña root
+```bash
+passwd
 ```
 Crear usuario
 ```bash
@@ -88,9 +152,14 @@ Para BIOS:
 ```bash
 grub-install --target=i386-pc /dev/sda
 ```
+#< Finalizar instalación
+```bash
+exit
+umount -R /mnt
+reboot
+```
 
-
-## Post-Install, eso creo
+# Post-Install, eso creo
 0. Conectarse a internet
 1. Actualizar sistema
 ```bash
