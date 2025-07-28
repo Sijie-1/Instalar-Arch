@@ -84,24 +84,24 @@ pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode \
 networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks \
 xdg-user-dirs flatpak bash-completion fastfetch firewalld
 ```
-Específico para UEFI:
+## Específico para UEFI:
 ```bash
 pacstrap -K /mnt efibootmgr
 ```
-Específico para BIOS:
+## Específico para BIOS:
 ```bash
 pacstrap -K /mnt os-prober
 ```
-Generar fstab:
+## Generar fstab:
 ```bash
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
-# Entrar al sistema (chroot)
+# Entrar al sistema (chroot):
 ```bash
 arch-chroot /mnt
 ```
 # Configuración básica del sistema
-Zona horaria (Ecuador)
+## Zona horaria (Ecuador):
 ```bash
 ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime
 timedatectl set-ntp true
@@ -110,11 +110,11 @@ hwclock --systohc
 nano /etc/locale.gen  # Descomentar es_EC.UTF-8 UTF-8
 locale-gen
 ```
-Configuración regional
+## Configuración regional:
 ```bash
 echo "LANG=es_EC.UTF-8" > /etc/locale.conf
 ```
-Configuración de red y hostname
+## Configuración de red y hostname:
 ```bash
 echo "archlinux" > /etc/hostname
 nano /etc/hosts
@@ -130,29 +130,29 @@ systemctl enable NetworkManager
 systemctl enable firewalld
 ```
 # Configurar usuario y sudo
-Contraseña root
+## Contraseña root:
 ```bash
 passwd
 ```
-Crear usuario
+## Crear usuario:
 ```bash
 useradd -m -G wheel -s /bin/bash tu_usuario
 passwd tu_usuario
 ```
-Configurar sudo
+## Configurar sudo:
 ```bash
 EDITOR=nano visudo  # Descomentar: %wheel ALL=(ALL:ALL) ALL
 ```
-## Instalar GRUB
-Para UEFI:
+# Instalar GRUB:
+## Para UEFI:
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 ```
-Para BIOS:
+## Para BIOS:
 ```bash
 grub-install --target=i386-pc /dev/sda
 ```
-#< Finalizar instalación
+# Finalizar instalación
 ```bash
 exit
 umount -R /mnt
