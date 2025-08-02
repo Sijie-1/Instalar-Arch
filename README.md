@@ -198,7 +198,7 @@ cd yay && makepkg -si
 -----
 # Mi uso diario
 
-# Navegador:----------
+### Navegador:----------
 En gnome software descargar brave
 
 # Herramientas adicionales:----------
