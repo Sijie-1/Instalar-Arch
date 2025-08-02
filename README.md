@@ -19,70 +19,68 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 
 # Conexión a Internet
 ```bash
-rfkill unblock all
-ip link set wlan0 up
-iwctl
-[iwd]# station wlan0 scan
-[iwd]# station wlan0 connect "TU_RED"
-exit
-ping -c 4 archlinux.org
+   rfkill unblock all
+   ip link set wlan0 up
+   iwctl
+   [iwd]# station wlan0 scan
+   [iwd]# station wlan0 connect "TU_RED"
+   exit
+   ping -c 4 archlinux.org
 ```
 # Particionar disco (GPT)
 ```bash
-lsblk
-cfdisk /dev/nvme0n1  # (ajustar según tu disco)
+   lsblk
+   cfdisk /dev/nvme0n1  # (ajustar según tu disco)
 ```
-| Partición | Tamaño    | Tipo (GPT)       | Montaje |
-|-----------|-----------|------------------|---------|
-| nvme0n1p1 | 550 MiB   | EFI System (ef00)| /boot   |
-| nvme0n1p2 | 8-16 GiB  | Linux swap       | [SWAP]  |
-| nvme0n1p3 | 30-50 GiB | Linux filesystem | /       |
-| nvme0n1p4 | Resto     | Linux filesystem | /home   |
+   | Partición | Tamaño    | Tipo (GPT)       | Montaje |
+   |-----------|-----------|------------------|---------|
+   | nvme0n1p1 | 550 MiB   | EFI System (ef00)| /boot   |
+   | nvme0n1p2 | 8-16 GiB  | Linux swap       | [SWAP]  |
+   | nvme0n1p3 | 30-50 GiB | Linux filesystem | /       |
+   | nvme0n1p4 | Resto     | Linux filesystem | /home   |
 
-| Partición | Tamaño    | Tipo (MBR)          | Montaje |
-|-----------|-----------|---------------------|---------|
-| sda1      | 512 MiB   | Bootable, Linux     | /boot   |
-| sda2      | 8-16 GiB  | Linux swap          | [SWAP]  |
-| sda3      | 30-50 GiB | Linux filesystem    | /       |
-| sda4      | Resto     | Linux filesystem    | /home   |
+   | Partición | Tamaño    | Tipo (MBR)          | Montaje |
+   |-----------|-----------|---------------------|---------|
+   | sda1      | 512 MiB   | Bootable, Linux     | /boot   |
+   | sda2      | 8-16 GiB  | Linux swap          | [SWAP]  |
+   | sda3      | 30-50 GiB | Linux filesystem    | /       |
+   | sda4      | Resto     | Linux filesystem    | /home   |
 
 ## Formatear particiones (gpt)
 ```bash
-mkfs.fat -F32 /dev/nvme0n1p1
-mkswap /dev/nvme0n1p2
-mkfs.ext4 /dev/nvme0n1p3
-mkfs.ext4 /dev/nvme0n1p4
+   mkfs.fat -F32 /dev/nvme0n1p1
+   mkswap /dev/nvme0n1p2
+   mkfs.ext4 /dev/nvme0n1p3
+   mkfs.ext4 /dev/nvme0n1p4
 ```
 ## Montar particiones (gpt)
 ```bash
-mount /dev/nvme0n1p3 /mnt
-mkdir -p /mnt/boot
-mount /dev/nvme0n1p1 /mnt/boot
-swapon /dev/nvme0n1p2
-mkdir -p /mnt/home
-mount /dev/nvme0n1p4 /mnt/home
+   mount /dev/nvme0n1p3 /mnt
+   mkdir -p /mnt/boot
+   mount /dev/nvme0n1p1 /mnt/boot
+   swapon /dev/nvme0n1p2
+   mkdir -p /mnt/home
+   mount /dev/nvme0n1p4 /mnt/home
 ```
 ## Formatear particiones (mbr)
 ```bash
-mkfs.ext4 /dev/sda1
-mkswap /dev/sda2
-mkfs.ext4 /dev/sda3
-mkfs.ext4 /dev/sda4
+   mkfs.ext4 /dev/sda1
+   mkswap /dev/sda2
+   mkfs.ext4 /dev/sda3
+   mkfs.ext4 /dev/sda4
 ```
 ## Montar particiones (mbr)
 ```bash
-mount /dev/sda3 /mnt
-mkdir -p /mnt/boot
-mount /dev/sda1 /mnt/boot
-swapon /dev/sda2
-mkdir -p /mnt/home
-mount /dev/sda4 /mnt/home
+   mount /dev/sda3 /mnt
+   mkdir -p /mnt/boot
+   mount /dev/sda1 /mnt/boot
+   swapon /dev/sda2
+   mkdir -p /mnt/home
+   mount /dev/sda4 /mnt/home
 ```
 # Instalar Sistema Base
 ```bash
-pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode \
-networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks \
-xdg-user-dirs flatpak bash-completion fastfetch firewalld
+   pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks xdg-user-dirs flatpak bash-completion fastfetch firewalld
 ```
 ## Específico para UEFI:
 ```bash
