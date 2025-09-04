@@ -80,10 +80,10 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 ```
 # Instalar Sistema Base
 ```bash
-  pacstrap -K /mnt base bash-completion efibootmgr firewalld flatpak gdm git \
+pacstrap -K /mnt base base-devel bash-completion efibootmgr firewalld flatpak gdm git \
 gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
-intel-ucode linux-zen linux-zen-headers linux-firmware mesa nautilus networkmanager \
-os-prober pacman sudo swiftfetch vulkan-intel xdg-user-dirs --needed
+intel-ucode linux-firmware linux-zen linux-zen-headers mesa nautilus networkmanager \
+os-prober fastfetch vulkan-intel xdg-user-dirs --needed
 ```
 ## Específico para UEFI:
 ```bash
@@ -126,9 +126,11 @@ nano /etc/hosts
 ```
 # Habilitación de servicios
 ```bash
-systemctl enable gdm
 systemctl enable NetworkManager
+systemctl enable gdm
 systemctl enable firewalld
+systemctl enable systemd-timesyncd
+systemctl enable fstrim.timer
 ```
 # Configurar usuario y sudo
 ## Contraseña root:
@@ -193,7 +195,6 @@ clear
    gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
 
 8. Yay (AUR helper):
-sudo pacman -S --needed base-devel git
 git clone https://aur.archlinux.org/yay.git
 cd yay && makepkg -si
 -----
