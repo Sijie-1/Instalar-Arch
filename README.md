@@ -27,7 +27,7 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
    exit
    ping -c 4 archlinux.org
 ```
-# Particionar disco (GPT)
+# Particionar disco
 ```bash
    lsblk
    cfdisk /dev/nvme0n1  # (ajustar según tu disco)
@@ -80,7 +80,10 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 ```
 # Instalar Sistema Base
 ```bash
-   pacstrap -K /mnt base linux-zen linux-zen-headers linux-firmware intel-ucode networkmanager grub sudo nano gdm gnome-shell gnome-control-center gnome-tweaks xdg-user-dirs flatpak bash-completion fastfetch firewalld
+  pacstrap -K /mnt base bash-completion efibootmgr firewalld flatpak gdm git \
+gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
+intel-ucode linux-zen linux-zen-headers linux-firmware mesa nautilus networkmanager \
+os-prober pacman sudo swiftfetch vulkan-intel xdg-user-dirs --needed
 ```
 ## Específico para UEFI:
 ```bash
