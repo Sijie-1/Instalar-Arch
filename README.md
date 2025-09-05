@@ -161,38 +161,63 @@ reboot
 # Post-Install, eso creo
 0. Conectarse a internet
 1. Actualizar sistema:
+   ```bash
    sudo pacman -Syu
-
-2. Configurar Flatpak:
+	```
+3. Configurar Flatpak:
+4. ```bash
    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
    reboot
-
-3. Instalar gnome-browser-connector:
+   ```
+5. Instalar gnome-browser-connector:
+   ```bash
    sudo pacman -S gnome-browser-connector
-
-4. Configurar .bashrc para Fastfetch:
+   ```
+7. Configurar .bashrc para Fastfetch:
+   ```bash
    nano ~/.bashrc
+   ```
    # Añadir al final del texto:
-clear
-	fastfetch
+
+```bash
+if [ -t 1 ]; then
+    echo -n "¿Quieres actualizar el sistema? (s/n): "
+    read respuesta
+    if [[ "$respuesta" == "s" || "$respuesta" == "S" ]]; then
+        sudo pacman -Syu && yay -Syu
+        clear
+            fastfetch
+    else
+        clear
+            fastfetch
+    fi
+fi
+```
 
 5. Activar Multilib (para Steam/WINE):
+   ```bash
    sudo nano /etc/pacman.conf
+   ```
    # Descomentar:
    [multilib]
    Include = /etc/pacman.d/mirrorlist
+   ```bash
    sudo pacman -Syu
-
-6. Configurar firewall:
+   ```
+7. Configurar firewall:
+   ```bash
    sudo firewall-cmd --set-default-zone=home
    sudo firewall-cmd --complete-reload
-
-7. Botones de ventana:
+   ```
+9. Botones de ventana:
+    ```bash
    gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
-
-8. Yay (AUR helper):
-git clone https://aur.archlinux.org/yay.git
-cd yay && makepkg -si
+    ```
+11. Yay (AUR helper):
+   ```bash
+   git clone https://aur.archlinux.org/yay.git
+   cd yay && makepkg -si
+   ```
 -----
 # Mi uso diario
 
