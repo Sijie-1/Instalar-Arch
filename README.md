@@ -83,15 +83,11 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 pacstrap -K /mnt base base-devel bash-completion efibootmgr firewalld flatpak gdm git \
 gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
 intel-ucode linux-firmware linux-zen linux-zen-headers mesa nautilus networkmanager \
-os-prober fastfetch vulkan-intel xdg-user-dirs --needed
+os-prober fastfetch vulkan-intel xdg-user-dirs --needed os-prober
 ```
 ## Específico para UEFI:
 ```bash
 pacstrap -K /mnt efibootmgr
-```
-## Específico para BIOS:
-```bash
-pacstrap -K /mnt os-prober
 ```
 ## Generar fstab:
 ```bash
