@@ -80,10 +80,10 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 ```
 # Instalar Sistema Base
 ```bash
-pacstrap -K /mnt base base-devel bash-completion efibootmgr firewalld flatpak gdm git \
+pacstrap -K /mnt base base-devel bash-completion firewalld flatpak gdm git \
 gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
 intel-ucode linux-firmware linux-zen linux-zen-headers mesa nautilus networkmanager \
-os-prober fastfetch vulkan-intel xdg-user-dirs --needed os-prober
+os-prober fastfetch vulkan-intel xdg-user-dirs --needed grub nano
 ```
 ## Específico para UEFI:
 ```bash
@@ -142,14 +142,26 @@ passwd tu_usuario
 ```bash
 EDITOR=nano visudo  # Descomentar: %wheel ALL=(ALL:ALL) ALL
 ```
-# Instalar GRUB:
+# Instalar GRUB (dualboot con Windows):
 ## Para UEFI:
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 ```
+```bash
+nano etc/default/grub #Descomentar la línea GRUB_DISABLE_OS_PROBER=false
+```
+```bash
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
 ## Para BIOS:
 ```bash
 grub-install --target=i386-pc /dev/sda
+```
+```bash
+nano etc/default/grub #Descomentar la línea GRUB_DISABLE_OS_PROBER=false
+```
+```bash
+sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 # Finalizar instalación
 ```bash
@@ -258,27 +270,6 @@ Aplicaciones heredadas: Layan-Dark
 # Perfil de Power Options:----------
 sudo pacman -S power-profiles-daemon
 sudo systemctl enable power-profiles-daemon.service
-
-
-# Dual boot con windows:----------
-    #Ver la UUID de la particion efi
-    sudo blkid /dev/nvme0n1p1
-    
-    #Editar opciones de arranque
-    sudo nano /etc/grub.d/40_custom
-    
-    #Agregar esto al final de el texto:
-
-menuentry "Windows" {
-  insmod part_gpt
-  insmod fat
-  insmod chain
-  search --fs-uuid --set=root 1234-5678 #Reemplazar 1234-5678 con la UUID real de tu partición EFI de Windows
-  chainloader /EFI/Microsoft/Boot/bootmgfw.efi
-}
-    #Generar grub con todos los cambios
-    sudo grub-mkconfig -o /boot/grub/grub.cfg
-    reboot
 
 
 # Terminal de gnome transparente:----------
