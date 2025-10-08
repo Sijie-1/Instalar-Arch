@@ -83,7 +83,7 @@ Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea h
 pacstrap -K /mnt base base-devel bash-completion firewalld flatpak gdm git \
 gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
 intel-ucode linux-firmware linux-zen linux-zen-headers mesa nautilus networkmanager \
-os-prober fastfetch vulkan-intel xdg-user-dirs --needed grub nano
+os-prober fastfetch vulkan-intel xdg-user-dirs --needed grub nano zram-generator
 ```
 ## Específico para UEFI:
 ```bash
@@ -280,35 +280,28 @@ yay gnome-terminal-transparency
 sudo pacman -S steam lib32-vulkan-intel
 yay -S proton-ge-custom-bin
 
-# Instalar Sober:----------
-    En la gnome-software esta la el Sober
+# Zram
+sudo nano /etc/systemd/zram-generator.conf
+-Agregar esto:
+[zram0]
+zram-size = ram / 2
+compression-algorithm = zstd
+swap-priority = 100
 
-# Instalar SKlauncher:----------
-    (Descargar el .jar de la pag oficial en el apartado de linux: https://skmedix.pl/downloads)
-    (Descargar un icon.png sobre sklauncher)
+sudo systemctl edit systemd-zram-setup@zram0.service
+-Agregar esto:
+[Install]
+WantedBy=multi-user.target
 
-    #Crear una carpeta llamada .SKlauncher en /home/user
+sudo systemctl enable --now systemd-zram-setup@zram0.service
 
-    #Mover ahi los dos archivos (.jar y .png)
+# Optimmización de ssd
+sudo nano /etc/fstab
+-agregar esto:
+tmpfs   /tmp         tmpfs   defaults,noatime,mode=1777   0  0
 
-    #Crear la aplicacion de sklauncher
-    nano ~/.local/share/applications/sklauncher.desktop
-
-    #Agregar dentro de esa app lo siguiente:
-
-[Desktop Entry]
-Name=SKLauncher
-Comment=Lanzador de Minecraft
-Exec=java -jar /home/sijie/.sklauncher/SKlauncher-3.2.12.jar
-Icon=/home/sijie/.sklauncher/sklauncher.png
-Terminal=false
-Type=Application
-Categories=Game;
-StartupNotify=true
-
-    #Puedes cambiar los directorios de el .jar y .png
-
-
+-y cambiar el / y /home de su rw,relatime por:
+rw,noatime,relatime
 # Instalar Waydroid con root magisk:----------
 
        yay -S waydroid
