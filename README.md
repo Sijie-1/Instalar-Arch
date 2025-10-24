@@ -108,12 +108,12 @@ mount /dev/sda4 /mnt/home
 
 ```bash
 pacstrap -K /mnt base base-devel bash-completion bluez bluez-utils eog \
-fastfetch firewalld flatpak gdm git gnome-browser-connector \
+fastfetch firefox firewalld flatpak gdm git gnome-browser-connector \
 gnome-calculator gnome-control-center gnome-shell gnome-software \
 gnome-terminal gnome-tweaks grub intel-ucode lib32-vulkan-intel \
 linux-firmware linux-zen mesa nano nautilus networkmanager noto-fonts-cjk \
 os-prober power-profiles-daemon python python-pip python-virtualenv steam \
-ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs --needed
+ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs --needed 
 ```
 
 ### Específico para UEFI
@@ -311,21 +311,14 @@ git clone https://aur.archlinux.org/yay.git
 cd yay && makepkg -si
 ```
 
----
-
-## Configuración para Uso Diario
-
-### Navegador
-
-Descarga Brave desde GNOME Software.
-
-### Herramientas adicionales
-
-### Java
+### 8. Instalar OpenJDK (Temurin)
 
 ```bash
 yay -S jdk21-temurin
 ```
+---
+
+## Configuración para Uso Diario
 
 ### Extensiones de GNOME
 
