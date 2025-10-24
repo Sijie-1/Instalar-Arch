@@ -114,13 +114,13 @@ pacstrap -K /mnt \
     eog fastfetch firefox firewalld flatpak \
     gdm git \
     gnome-calculator gnome-control-center gnome-shell gnome-software \
-    gnome-terminal gnome-tweaks \
+    gnome-terminal gnome-tweaks gnome-browser-connector \
     grub intel-ucode \
-    lib32-vulkan-intel linux-firmware linux-zen \
+    linux-firmware linux-zen \
     mesa nano nautilus networkmanager noto-fonts-cjk \
     os-prober power-profiles-daemon \
     python python-pip python-virtualenv \
-    steam ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs \
+    ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs \
     --needed
 ```
 
@@ -324,7 +324,6 @@ cd yay && makepkg -si
 ```bash
 yay -S jdk21-temurin
 ```
----
 
 ### 9. Instalar la extension de gnome-shell-integration en el navegador
 
@@ -332,6 +331,21 @@ yay -S jdk21-temurin
 https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/
 ```
 
+### 10. Instalar steam con sus librerias y ProtonGE
+
+```bash
+sudo pacman -S steam lib32-vulkan-intel
+```
+```bash
+yay -S proton-ge-custom-bin
+```
+
+### 11. Instalar terminal de gnome transparente
+
+```bash
+yay -S gnome-terminal-transparency
+```
+---
 ## Configuración para Uso Diario
 
 ### Extensiones de GNOME
@@ -349,18 +363,9 @@ https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/
 - **GNOME Shell**: Graphite-Dark
 - **Aplicaciones heredadas**: Graphite-Dark
 
-### Terminal transparente
-
 ```bash
-yay -S gnome-terminal-transparency
+# Recomendacion par aaplicar temas gtk3 y gtk4 en gnome es usar la app de evolve-core disponible en github
 ```
-
-### Steam Proton-GE
-
-```bash
-yay -S proton-ge-custom-bin
-```
-
 ---
 
 ## Instalar Waydroid con Root Magisk
