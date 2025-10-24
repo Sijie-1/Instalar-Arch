@@ -1,196 +1,265 @@
-# � Instalar-Arch
+# Instalación de Arch Linux
 
-🔹
-Esta guia de instalacion fue hecha unicamente solo para mi uso, si usted desea hacer uso de ella tiene que hacerlo bajo su propio riesgo, realmente lo adapte para mis necesidades ya que lleva un mayor enfoque para intel
+Esta guía de instalación fue hecha únicamente para mi uso. Si deseas hacer uso de ella, hazlo bajo tu propio riesgo. La adapté para mis necesidades con un mayor enfoque en Intel.
+
 ---
 
-# � Características Principales  
-- *Guia de instalación manual*   
-- *Escritorio*: Gnome 
-- *Enfoque principal*: Lo mas vanilla posible
-- *Región*: America/Guayaquill UTC -5
-- *Paquetes Instalados despues del primer boot*: 400-600
-- *Tanto para GPT y MBR*
+## Características Principales
 
+- **Guía de instalación**: Manual
+- **Escritorio**: GNOME
+- **Enfoque principal**: Lo más vanilla posible
+- **Región**: America/Guayaquil UTC -5
+- **Paquetes instalados después del primer boot**: 400-600
+- **Compatibilidad**: GPT y MBR
 
 ![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?logo=arch-linux&logoColor=white)
 ![UEFI/BIOS](https://img.shields.io/badge/UEFI%2FBIOS-Compatible-blueviolet)
 ![GNOME](https://img.shields.io/badge/GNOME-4A86CF?logo=gnome&logoColor=white)
 
-# Conexión a Internet
-```bash
-   rfkill unblock all
-   ip link set wlan0 up
-   iwctl
-   [iwd]# station wlan0 scan
-   [iwd]# station wlan0 connect "TU_RED"
-   exit
-   ping -c 4 archlinux.org
-```
-# Particionar disco
-```bash
-   lsblk
-   cfdisk /dev/nvme0n1  # (ajustar según tu disco)
-```
-   | Partición | Tamaño    | Tipo (GPT)       | Montaje |
-   |-----------|-----------|------------------|---------|
-   | nvme0n1p1 | 550 MiB   | EFI System (ef00)| /boot   |
-   | nvme0n1p2 | 8-16 GiB  | Linux swap       | [SWAP]  |
-   | nvme0n1p3 | 30-50 GiB | Linux filesystem | /       |
-   | nvme0n1p4 | Resto     | Linux filesystem | /home   |
+---
 
-   | Partición | Tamaño    | Tipo (MBR)          | Montaje |
-   |-----------|-----------|---------------------|---------|
-   | sda1      | 512 MiB   | Bootable, Linux     | /boot   |
-   | sda2      | 8-16 GiB  | Linux swap          | [SWAP]  |
-   | sda3      | 30-50 GiB | Linux filesystem    | /       |
-   | sda4      | Resto     | Linux filesystem    | /home   |
+## Conexión a Internet
 
-## Formatear particiones (gpt)
 ```bash
-   mkfs.fat -F32 /dev/nvme0n1p1
-   mkswap /dev/nvme0n1p2
-   mkfs.ext4 /dev/nvme0n1p3
-   mkfs.ext4 /dev/nvme0n1p4
+rfkill unblock all
+ip link set wlan0 up
+iwctl
+[iwd]# station wlan0 scan
+[iwd]# station wlan0 connect "TU_RED"
+exit
+ping -c 4 archlinux.org
 ```
-## Montar particiones (gpt)
+
+---
+
+## Particionar Disco
+
 ```bash
-   mount /dev/nvme0n1p3 /mnt
-   mkdir -p /mnt/boot
-   mount /dev/nvme0n1p1 /mnt/boot
-   swapon /dev/nvme0n1p2
-   mkdir -p /mnt/home
-   mount /dev/nvme0n1p4 /mnt/home
+lsblk
+cfdisk /dev/nvme0n1  # Ajusta según tu disco
 ```
-## Formatear particiones (mbr)
+
+### Esquema de particiones GPT
+
+| Partición | Tamaño    | Tipo              | Montaje |
+|-----------|-----------|-------------------|---------|
+| nvme0n1p1 | 550 MiB   | EFI System (ef00) | /boot   |
+| nvme0n1p2 | 8-16 GiB  | Linux swap        | [SWAP]  |
+| nvme0n1p3 | 30-50 GiB | Linux filesystem  | /       |
+| nvme0n1p4 | Resto     | Linux filesystem  | /home   |
+
+### Esquema de particiones MBR
+
+| Partición | Tamaño    | Tipo             | Montaje |
+|-----------|-----------|------------------|---------|
+| sda1      | 512 MiB   | Bootable, Linux  | /boot   |
+| sda2      | 8-16 GiB  | Linux swap       | [SWAP]  |
+| sda3      | 30-50 GiB | Linux filesystem | /       |
+| sda4      | Resto     | Linux filesystem | /home   |
+
+---
+
+## Formatear y Montar Particiones
+
+### Para GPT
+
+**Formatear:**
 ```bash
-   mkfs.ext4 /dev/sda1
-   mkswap /dev/sda2
-   mkfs.ext4 /dev/sda3
-   mkfs.ext4 /dev/sda4
+mkfs.fat -F32 /dev/nvme0n1p1
+mkswap /dev/nvme0n1p2
+mkfs.ext4 /dev/nvme0n1p3
+mkfs.ext4 /dev/nvme0n1p4
 ```
-## Montar particiones (mbr)
+
+**Montar:**
 ```bash
-   mount /dev/sda3 /mnt
-   mkdir -p /mnt/boot
-   mount /dev/sda1 /mnt/boot
-   swapon /dev/sda2
-   mkdir -p /mnt/home
-   mount /dev/sda4 /mnt/home
+mount /dev/nvme0n1p3 /mnt
+mkdir -p /mnt/boot
+mount /dev/nvme0n1p1 /mnt/boot
+swapon /dev/nvme0n1p2
+mkdir -p /mnt/home
+mount /dev/nvme0n1p4 /mnt/home
 ```
-# Instalar Sistema Base
+
+### Para MBR
+
+**Formatear:**
 ```bash
-pacstrap -K /mnt base base-devel bash-completion firewalld flatpak gdm git \
-gnome-control-center gnome-software gnome-shell gnome-terminal gnome-tweaks \
-intel-ucode linux-firmware linux-zen linux-zen-headers mesa nautilus networkmanager \
-os-prober fastfetch vulkan-intel xdg-user-dirs --needed grub nano zram-generator
+mkfs.ext4 /dev/sda1
+mkswap /dev/sda2
+mkfs.ext4 /dev/sda3
+mkfs.ext4 /dev/sda4
 ```
-## Específico para UEFI:
+
+**Montar:**
+```bash
+mount /dev/sda3 /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+swapon /dev/sda2
+mkdir -p /mnt/home
+mount /dev/sda4 /mnt/home
+```
+
+---
+
+## Instalar Sistema Base
+
+```bash
+pacstrap -K /mnt base base-devel bash-completion bluez bluez-utils eog \
+fastfetch firewalld flatpak gdm git gnome-browser-connector \
+gnome-calculator gnome-control-center gnome-shell gnome-software \
+gnome-terminal gnome-tweaks grub intel-ucode lib32-vulkan-intel \
+linux-firmware linux-zen mesa nano nautilus networkmanager noto-fonts-cjk \
+os-prober power-profiles-daemon python python-pip python-virtualenv steam \
+ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs --needed
+```
+
+### Específico para UEFI
+
 ```bash
 pacstrap -K /mnt efibootmgr
 ```
-## Generar fstab:
+
+### Generar fstab
+
 ```bash
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
-# Entrar al sistema (chroot):
+
+---
+
+## Entrar al Sistema (chroot)
+
 ```bash
 arch-chroot /mnt
 ```
-# Configuración básica del sistema
-## Zona horaria (Ecuador):
+
+---
+
+## Configuración Básica del Sistema
+
+### Zona horaria (Ecuador)
+
 ```bash
 ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime
 timedatectl set-ntp true
 timedatectl set-local-rtc 0
 hwclock --systohc
+```
+
+### Configurar idioma
+
+```bash
 nano /etc/locale.gen  # Descomentar es_EC.UTF-8 UTF-8
 locale-gen
-```
-## Configuración regional:
-```bash
 echo "LANG=es_EC.UTF-8" > /etc/locale.conf
 ```
-## Configuración de red y hostname:
+
+### Configurar hostname
+
 ```bash
 echo "archlinux" > /etc/hostname
 nano /etc/hosts
+```
 
+Añade estas líneas:
+```
 127.0.0.1    localhost
 ::1          localhost
 127.0.1.1    archlinux.localdomain archlinux
 ```
-# Habilitación de servicios
+
+---
+
+## Habilitar Servicios
+
 ```bash
 systemctl enable NetworkManager
 systemctl enable gdm
 systemctl enable firewalld
-systemctl enable systemd-timesyncd
-systemctl enable fstrim.timer
+systemctl enable bluetooth
+systemctl enable power-profiles-daemon
 ```
-# Configurar usuario y sudo
-## Contraseña root:
+
+---
+
+## Configurar Usuario y Sudo
+
+### Contraseña root
+
 ```bash
 passwd
 ```
-## Crear usuario:
+
+### Crear usuario
+
 ```bash
 useradd -m -G wheel -s /bin/bash tu_usuario
 passwd tu_usuario
 ```
-## Configurar sudo:
+
+### Configurar sudo
+
 ```bash
 EDITOR=nano visudo  # Descomentar: %wheel ALL=(ALL:ALL) ALL
 ```
-# Instalar GRUB (dualboot con Windows):
-## Para UEFI:
+
+---
+
+## Instalar GRUB (Dualboot con Windows)
+
+### Para UEFI
+
 ```bash
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
+nano /etc/default/grub  # Descomentar: GRUB_DISABLE_OS_PROBER=false
+grub-mkconfig -o /boot/grub/grub.cfg
 ```
-```bash
-nano etc/default/grub #Descomentar la línea GRUB_DISABLE_OS_PROBER=false
-```
-```bash
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-```
-## Para BIOS:
+
+### Para BIOS
+
 ```bash
 grub-install --target=i386-pc /dev/sda
+nano /etc/default/grub  # Descomentar: GRUB_DISABLE_OS_PROBER=false
+grub-mkconfig -o /boot/grub/grub.cfg
 ```
-```bash
-nano etc/default/grub #Descomentar la línea GRUB_DISABLE_OS_PROBER=false
-```
-```bash
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-```
-# Finalizar instalación
+
+---
+
+## Finalizar Instalación
+
 ```bash
 exit
 umount -R /mnt
 reboot
 ```
------
-# Post-Install, eso creo
-0. Conectarse a internet
-1. Actualizar sistema:
-   ```bash
-   sudo pacman -Syu
-	```
-3. Configurar Flatpak:
-4. ```bash
-   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-   reboot
-   ```
-5. Instalar gnome-browser-connector:
-   ```bash
-   sudo pacman -S gnome-browser-connector
-   ```
-7. Configurar .bashrc para Fastfetch:
-   ```bash
-   nano ~/.bashrc
-   ```
-   # Añadir al final del texto:
 
+---
+
+## Post-Instalación
+
+### 1. Conectarse a internet y actualizar
+
+```bash
+sudo pacman -Syu
+```
+
+### 2. Configurar Flatpak
+
+```bash
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+reboot
+```
+
+### 3. Configurar .bashrc para Fastfetch
+
+```bash
+nano ~/.bashrc
+```
+
+Añade al final:
 ```bash
 if [ -t 1 ]; then
     echo -n "¿Quieres actualizar el sistema? (s/n): "
@@ -198,203 +267,246 @@ if [ -t 1 ]; then
     if [[ "$respuesta" == "s" || "$respuesta" == "S" ]]; then
         sudo pacman -Syu && yay -Syu
         clear
-            fastfetch
+        fastfetch
     else
         clear
-            fastfetch
+        fastfetch
     fi
 fi
 ```
 
-5. Activar Multilib (para Steam/WINE):
-   ```bash
-   sudo nano /etc/pacman.conf
-   ```
-   # Descomentar:
-   [multilib]
-   Include = /etc/pacman.d/mirrorlist
-   ```bash
-   sudo pacman -Syu
-   ```
-7. Configurar firewall:
-   ```bash
-   sudo firewall-cmd --set-default-zone=home
-   sudo firewall-cmd --complete-reload
-   ```
-9. Botones de ventana:
-    ```bash
-   gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
-    ```
-11. Yay (AUR helper):
-   ```bash
-   git clone https://aur.archlinux.org/yay.git
-   cd yay && makepkg -si
-   ```
------
-# Mi uso diario
+### 4. Activar Multilib (para Steam/WINE)
 
-### Navegador:----------
-En gnome software descargar brave
+```bash
+sudo nano /etc/pacman.conf
+```
 
-# Herramientas adicionales:----------
+Descomentar:
+```
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
+
+```bash
+sudo pacman -Syu
+```
+
+### 5. Configurar firewall
+
+```bash
+sudo firewall-cmd --set-default-zone=home
+sudo firewall-cmd --complete-reload
+```
+
+### 6. Botones de ventana
+
+```bash
+gsettings set org.gnome.desktop.wm.preferences button-layout "appmenu:minimize,maximize,close"
+```
+
+### 7. Instalar Yay (AUR helper)
+
+```bash
+git clone https://aur.archlinux.org/yay.git
+cd yay && makepkg -si
+```
+
+---
+
+## Configuración para Uso Diario
+
+### Navegador
+
+Descarga Brave desde GNOME Software.
+
+### Herramientas adicionales
+
+```bash
 sudo pacman -S gnome-system-monitor eog gnome-calculator
+```
 
+### Java
 
-# Java:----------
+```bash
 yay -S jdk21-temurin
+```
 
+### Python
 
-# Python:----------
+```bash
 sudo pacman -S python python-pip python-virtualenv
+```
 
-# Instalar Fonts faltantes:----------
+### Fuentes
+
+```bash
 sudo pacman -S wqy-zenhei ttf-arphic-uming noto-fonts-cjk
+```
 
-# Extensiones usadas:----------
-Bluetooth Battery Meter
-Blur my Shell 
-Dash to Dock 
-Just Perfection 
-User Avatar In Quick Settings
-User Themes 
-V-Shell 
+### Extensiones de GNOME
 
+- Bluetooth Battery Meter
+- Dash to Dock
+- User Avatar In Quick Settings
+- User Themes
+- Quick Setting Audio Panel
 
-# Paquetes de retoques:----------
-Cursor: Bibata Modern Ice
-Iconos: Tela 
-GNOME Shell: Layan-Dark 
-Aplicaciones heredadas: Layan-Dark
+### Temas
 
+- **Cursor**: Bibata Modern Ice
+- **Iconos**: Tela
+- **GNOME Shell**: Graphite-Dark
+- **Aplicaciones heredadas**: Graphite-Dark
 
-# Perfil de Power Options:----------
+### Power Profiles Daemon
+
+```bash
 sudo pacman -S power-profiles-daemon
 sudo systemctl enable power-profiles-daemon.service
+```
 
+### Terminal transparente
 
-# Terminal de gnome transparente:----------
-yay gnome-terminal-transparency
+```bash
+yay -S gnome-terminal-transparency
+```
 
+### Steam
 
-# Steam:----------
+```bash
 sudo pacman -S steam lib32-vulkan-intel
 yay -S proton-ge-custom-bin
+```
 
-# Zram
-sudo nano /etc/systemd/zram-generator.conf
--Agregar esto:
-[zram0]
-zram-size = ram / 2
-compression-algorithm = zstd
-swap-priority = 100
+---
 
-sudo systemctl edit systemd-zram-setup@zram0.service
--Agregar esto:
-[Install]
-WantedBy=multi-user.target
+## Instalar Waydroid con Root Magisk
 
-sudo systemctl enable --now systemd-zram-setup@zram0.service
+### 1. Instalar Waydroid
 
-# Optimmización de ssd
-sudo nano /etc/fstab
--agregar esto:
-tmpfs   /tmp         tmpfs   defaults,noatime,mode=1777   0  0
+```bash
+yay -S waydroid
+```
 
--y cambiar el / y /home de su rw,relatime por:
-rw,noatime,relatime
-# Instalar Waydroid con root magisk:----------
+### 2. Preparar imágenes
 
-       yay -S waydroid
-    
-    a. desargar de soruce forge el system y vendor
-       sudo mkdir -p /usr/share/waydroid-extra/images/
-       cd /usr/share/waydroid-extra/images/
+Descarga de SourceForge los archivos system.img y vendor.img.
 
-    b. Extraer el system.img y vendor.img
-       sudo mv /ruta/de/donde/esten/los/.img /usr/share/waydroid-extra/images/
-       sudo waydroid init
+```bash
+sudo mkdir -p /usr/share/waydroid-extra/images/
+cd /usr/share/waydroid-extra/images/
+sudo mv /ruta/de/donde/esten/los/.img /usr/share/waydroid-extra/images/
+sudo waydroid init
+```
 
-    c. Abrir Waydroid
+### 3. Configurar firewall
 
-       sudo waydroid session stop
-       sudo waydroid container stop 
+```bash
+sudo waydroid session stop
+sudo waydroid container stop
+firewall-cmd --zone=trusted --add-port=67/udp
+firewall-cmd --zone=trusted --add-port=53/udp
+firewall-cmd --zone=trusted --add-forward
+firewall-cmd --zone=trusted --add-interface=waydroid0
+```
 
-       firewall-cmd --zone=trusted --add-port=67/udp
-       firewall-cmd --zone=trusted --add-port=53/udp
-       firewall-cmd --zone=trusted --add-forward
-       firewall-cmd --zone=trusted --add-interface=waydroid0
-    
-    d. Ahora root
+### 4. Instalar root
 
-        https://github.com/mistrmochov/WaydroidSU
+Sigue las instrucciones en: https://github.com/mistrmochov/WaydroidSU
 
-# Activar Bluetooth:----------
+---
+
+## Activar Bluetooth
+
+```bash
 sudo pacman -S bluez bluez-utils
 sudo systemctl enable bluetooth.service
 sudo systemctl start bluetooth.service
+```
 
+---
 
-##### RECOMENDACIONES Y MANTENIMIENTO
+## Recomendaciones y Mantenimiento
 
-# Para personalización avanzada de GNOME Shell:
-# 1. Los temas de iconos van en: /home/user/.icons
-# 2. Los temas de shell/GTK van en: /home/user/.themes
-# 3. Para editar el tema actual:
-#    nano ~/.local/share/themes/Thema/gnome-shell/gnome-shell.css (cambiar el .popup-menu-content para ajustar el color, debe de estar rgba)
+### Personalización de GNOME Shell
 
-# Limpieza del sistema:
-# - Paquetes huérfanos: sudo pacman -Rns $(pacman -Qdtq)
-# - Caché: sudo pacman -Sc
-# - Actualización completa: sudo pacman -Syu && yay -Syu
+- Los temas de iconos van en: `~/.icons`
+- Los temas de shell/GTK van en: `~/.themes`
+- Para editar el tema actual:
+  ```bash
+  nano ~/.local/share/themes/Thema/gnome-shell/gnome-shell.css
+  ```
+  Cambiar `.popup-menu-content` para ajustar el color (debe estar en rgba).
 
-# Solución de problemas:
-# - Si el tema no aplica: Alt+F2, luego 'r' para reiniciar GNOME Shell
-# - Para restaurar configuración: rm -rf ~/.config/dconf/user
+### Limpieza del sistema
 
-# Limpiar caché de paquetes antiguos:
-# - sudo paccache -rk2
+```bash
+# Paquetes huérfanos
+sudo pacman -Rns $(pacman -Qdtq)
 
-======================================================================
+# Caché
+sudo pacman -Sc
 
-##### CONFIGURACIONES
+# Actualización completa
+sudo pacman -Syu && yay -Syu
 
-#Sober FFLAGS
-    #En el directorior ~/.var/app/org.vinegarhq.Sober/config/sober se encuentra los fflags
+# Limpiar caché de paquetes antiguos
+sudo paccache -rk2
+```
 
-    #Añadir los fastflags en el archivo config.json
+### Solución de problemas
 
-        "DFFlagDebugDisableTimeoutDisconnect": "True",
-        "DFFlagDebugPauseVoxelizer": "True",
-        "DFFlagDisableDPIScale": "True",
-        "DFFlagOrder66": "True",
-        "DFIntConnectionMTUSize": "900",
-        "DFIntMaxFrameBufferSize": "4",
-        "DFIntMaxLoadableAudioChannelCount": "1",
-        "DFIntPerformanceControlTextureQualityBestUtility": "-1",
-        "FFlagAdServiceEnabled": "False",
-        "FFlagDebugDisableTelemetryEphemeralCounter": "True",
-        "FFlagDebugDisableTelemetryEphemeralStat": "True",
-        "FFlagDebugDisableTelemetryEventIngest": "True",
-        "FFlagDebugDisableTelemetryPoint": "True",
-        "FFlagDebugDisableTelemetryV2Counter": "True",
-        "FFlagDebugDisableTelemetryV2Event": "True",
-        "FFlagDebugDisableTelemetryV2Stat": "True",
-        "FFlagDebugForceChatDisabled": "false",
-        "FFlagDebugGraphicsDisableDirect3D11": "True",
-        "FFlagDebugGraphicsPreferOpenGL": "True",
-        "FFlagDisablePostFx": "True",
-        "FFlagOptimizeNetwork": "True",
-        "FFlagOptimizeNetworkRouting": "True",
-        "FFlagOptimizeNetworkTransport": "True",
-        "FIntFRMMaxGrassDistance": "0",
-        "FIntFRMMinGrassDistance": "0",
-        "FIntRakNetResendBufferArrayLength": "128",
-        "FIntRenderGrassDetailStrands": "0",
-        "FIntRenderGrassHeightScaler": "0",
-        "FIntRenderShadowIntensity": "0",
-        "FIntRomarkStartWithGraphicQualityLevel": "1",
-        "FIntTerrainArraySliceSize": "4"
+- Si el tema no aplica: Alt+F2, luego 'r' para reiniciar GNOME Shell
+- Para restaurar configuración: `rm -rf ~/.config/dconf/user`
 
-#Configurar distribución de teclado en configuración 
+---
 
-#Configurar los atajos del teclado en configuración
+## Configuraciones Específicas
+
+### FastFlags de Sober
+
+En el directorio `~/.var/app/org.vinegarhq.Sober/config/sober` se encuentran los FastFlags.
+
+Añade estos FastFlags en el archivo `config.json`:
+
+```json
+"DFFlagDebugDisableTimeoutDisconnect": "True",
+"DFFlagDebugPauseVoxelizer": "True",
+"DFFlagDisableDPIScale": "True",
+"DFFlagOrder66": "True",
+"DFIntConnectionMTUSize": "900",
+"DFIntMaxFrameBufferSize": "4",
+"DFIntMaxLoadableAudioChannelCount": "1",
+"DFIntPerformanceControlTextureQualityBestUtility": "-1",
+"FFlagAdServiceEnabled": "False",
+"FFlagDebugDisableTelemetryEphemeralCounter": "True",
+"FFlagDebugDisableTelemetryEphemeralStat": "True",
+"FFlagDebugDisableTelemetryEventIngest": "True",
+"FFlagDebugDisableTelemetryPoint": "True",
+"FFlagDebugDisableTelemetryV2Counter": "True",
+"FFlagDebugDisableTelemetryV2Event": "True",
+"FFlagDebugDisableTelemetryV2Stat": "True",
+"FFlagDebugForceChatDisabled": "false",
+"FFlagDebugGraphicsDisableDirect3D11": "True",
+"FFlagDebugGraphicsPreferOpenGL": "True",
+"FFlagDisablePostFx": "True",
+"FFlagOptimizeNetwork": "True",
+"FFlagOptimizeNetworkRouting": "True",
+"FFlagOptimizeNetworkTransport": "True",
+"FIntFRMMaxGrassDistance": "0",
+"FIntFRMMinGrassDistance": "0",
+"FIntRakNetResendBufferArrayLength": "128",
+"FIntRenderGrassDetailStrands": "0",
+"FIntRenderGrassHeightScaler": "0",
+"FIntRenderShadowIntensity": "0",
+"FIntRomarkStartWithGraphicQualityLevel": "1",
+"FIntTerrainArraySliceSize": "4"
+```
+
+### Configuración del teclado
+
+Configura la distribución de teclado en Configuración del sistema.
+
+### Atajos de teclado
+
+Configura los atajos de teclado en Configuración del sistema.
