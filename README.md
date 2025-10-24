@@ -270,16 +270,39 @@ nano ~/.bashrc
 Añade al final:
 ```bash
 if [ -t 1 ]; then
-    echo -n "¿Quieres actualizar el sistema? (s/n): "
-    read respuesta
-    if [[ "$respuesta" == "s" || "$respuesta" == "S" ]]; then
-        sudo pacman -Syu && yay -Syu
-        clear
-        fastfetch
-    else
-        clear
-        fastfetch
-    fi
+    echo -n "¿Qué deseas hacer? (a / l): "
+    read opcion
+
+    case "$opcion" in
+        a|A)
+            clear
+            echo "# Se actualizara el sistema..."
+            sudo pacman -Syu && yay -Syu
+            clear
+            fastfetch
+            ;;
+        l|L)
+            clear
+            echo "# Paquetes huérfanos"
+            sudo pacman -Rns $(pacman -Qdtq)
+
+            echo
+            echo "# Caché"
+            sudo pacman -Sc
+            yay -Scc
+
+            echo
+            echo "# Limpiar caché de paquetes antiguos"
+            sudo paccache -rk2
+
+            clear
+            fastfetch
+            ;;
+        *)
+            clear
+            fastfetch
+            ;;
+    esac
 fi
 ```
 
