@@ -10,7 +10,7 @@ Esta guía de instalación fue hecha únicamente para mi uso. Si deseas hacer us
 - **Escritorio**: GNOME
 - **Enfoque principal**: Lo más vanilla posible
 - **Región**: America/Guayaquil UTC -5
-- **Paquetes instalados después del primer boot**: 400-600
+- **Paquetes instalados después del primer boot**: 600-700
 - **Compatibilidad**: GPT y MBR
 
 ![Arch Linux](https://img.shields.io/badge/Arch_Linux-1793D1?logo=arch-linux&logoColor=white)
@@ -23,6 +23,7 @@ Esta guía de instalación fue hecha únicamente para mi uso. Si deseas hacer us
 
 ```bash
 rfkill unblock all
+# Verifica tu red con: ip link
 ip link set wlan0 up
 iwctl
 [iwd]# station wlan0 scan
@@ -107,13 +108,20 @@ mount /dev/sda4 /mnt/home
 ## Instalar Sistema Base
 
 ```bash
-pacstrap -K /mnt base base-devel bash-completion bluez bluez-utils eog \
-fastfetch firefox firewalld flatpak gdm git gnome-browser-connector \
-gnome-calculator gnome-control-center gnome-shell gnome-software \
-gnome-terminal gnome-tweaks grub intel-ucode lib32-vulkan-intel \
-linux-firmware linux-zen mesa nano nautilus networkmanager noto-fonts-cjk \
-os-prober power-profiles-daemon python python-pip python-virtualenv steam \
-ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs --needed 
+pacstrap -K /mnt \
+    base base-devel \
+    bash-completion bluez bluez-utils \
+    eog fastfetch firefox firewalld flatpak \
+    gdm git \
+    gnome-calculator gnome-control-center gnome-shell gnome-software \
+    gnome-terminal gnome-tweaks \
+    grub intel-ucode \
+    lib32-vulkan-intel linux-firmware linux-zen \
+    mesa nano nautilus networkmanager noto-fonts-cjk \
+    os-prober power-profiles-daemon \
+    python python-pip python-virtualenv \
+    steam ttf-arphic-uming vulkan-intel wqy-zenhei xdg-user-dirs \
+    --needed
 ```
 
 ### Específico para UEFI
@@ -317,6 +325,12 @@ cd yay && makepkg -si
 yay -S jdk21-temurin
 ```
 ---
+
+### 9. Instalar la extension de gnome-shell-integration en el navegador
+
+```bash
+https://addons.mozilla.org/en-US/firefox/addon/gnome-shell-integration/
+```
 
 ## Configuración para Uso Diario
 
