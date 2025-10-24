@@ -160,7 +160,7 @@ echo "LANG=es_EC.UTF-8" > /etc/locale.conf
 ### Configurar hostname
 
 ```bash
-echo "archlinux" > /etc/hostname
+echo "arch" > /etc/hostname
 nano /etc/hosts
 ```
 
@@ -168,7 +168,7 @@ Añade estas líneas:
 ```
 127.0.0.1    localhost
 ::1          localhost
-127.0.1.1    archlinux.localdomain archlinux
+127.0.1.1    arch.localdomain arch
 ```
 
 ---
@@ -321,26 +321,10 @@ Descarga Brave desde GNOME Software.
 
 ### Herramientas adicionales
 
-```bash
-sudo pacman -S gnome-system-monitor eog gnome-calculator
-```
-
 ### Java
 
 ```bash
 yay -S jdk21-temurin
-```
-
-### Python
-
-```bash
-sudo pacman -S python python-pip python-virtualenv
-```
-
-### Fuentes
-
-```bash
-sudo pacman -S wqy-zenhei ttf-arphic-uming noto-fonts-cjk
 ```
 
 ### Extensiones de GNOME
@@ -358,23 +342,15 @@ sudo pacman -S wqy-zenhei ttf-arphic-uming noto-fonts-cjk
 - **GNOME Shell**: Graphite-Dark
 - **Aplicaciones heredadas**: Graphite-Dark
 
-### Power Profiles Daemon
-
-```bash
-sudo pacman -S power-profiles-daemon
-sudo systemctl enable power-profiles-daemon.service
-```
-
 ### Terminal transparente
 
 ```bash
 yay -S gnome-terminal-transparency
 ```
 
-### Steam
+### Steam Proton-GE
 
 ```bash
-sudo pacman -S steam lib32-vulkan-intel
 yay -S proton-ge-custom-bin
 ```
 
@@ -416,15 +392,6 @@ Sigue las instrucciones en: https://github.com/mistrmochov/WaydroidSU
 
 ---
 
-## Activar Bluetooth
-
-```bash
-sudo pacman -S bluez bluez-utils
-sudo systemctl enable bluetooth.service
-sudo systemctl start bluetooth.service
-```
-
----
 
 ## Recomendaciones y Mantenimiento
 
@@ -446,6 +413,7 @@ sudo pacman -Rns $(pacman -Qdtq)
 
 # Caché
 sudo pacman -Sc
+yay -Scc
 
 # Actualización completa
 sudo pacman -Syu && yay -Syu
